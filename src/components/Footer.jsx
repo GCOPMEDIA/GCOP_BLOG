@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaTiktok } from 'react-icons/fa';
 import {
   Box,
   Container,
@@ -69,14 +70,14 @@ const Footer = () => {
                 <FacebookIcon fontSize="large" />
               </IconButton>
               <IconButton
-                component="a"
-                href="https://www.tiktok.com/@peaceghana"
-                target="_blank"
-                rel="noopener"
-                sx={{ color: 'white' }}
-              >
-                <i className="bi bi-tiktok" style={{ fontSize: 28 }} />
-              </IconButton>
+  component="a"
+  href="https://www.tiktok.com/@peaceghana"
+  target="_blank"
+  rel="noopener"
+  sx={{ color: 'white' }}
+>
+  <FaTiktok size={28} />
+</IconButton>
             </Stack>
           </Grid>
 
