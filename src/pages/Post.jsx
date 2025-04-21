@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import blogCards from '../components/data';
 import {
   Box,
   Typography,
   IconButton,
-  Button,
   Snackbar,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
 
-const posts = [{
-    id: 1,
-    blog_title: "The Glory of God",
-    blog_subtitle: "A journey through faith",
-    blog_body: "<p>This is the <strong>body</strong> of the post.</p>",
-    video_url: "dQw4w9WgXcQ", // Optional
-    blog_media: "https://via.placeholder.com/800x400",
-    created_by: "Pastor John",
-  }];
 
 const Article = () => {
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+      axios.get('http://localhost:8000/all-posts/')
+        .then(response => {
+          setPosts(response.data);
+        })
+        .catch(error => {
+          console.error("Error fetching posts:", error);
+        });
+    }, []);
+
     const { id } = useParams();
     const post = posts.find((p) => p.id.toString() === id);
   const [likes, setLikes] = useState(0);
@@ -92,7 +94,7 @@ const Article = () => {
           />
         ) : (
           <img
-            src={post.blog_media}
+            src={post.media}
             alt="Blog Banner"
             style={{
               width: '90%',
@@ -118,11 +120,11 @@ const Article = () => {
             mb: 1,
           }}
         >
-          {post.blog_title}
+          {post.title}
         </Typography>
 
         <Typography variant="h6" color="#007BFF" sx={{ fontWeight: 'bold' }}>
-          {post.blog_subtitle}
+          {post.subtitle}
         </Typography>
       </Box>
 
@@ -138,7 +140,7 @@ const Article = () => {
           lineHeight: 1.6,
           textAlign: isMdUp ? 'justify' : 'left',
         }}
-        dangerouslySetInnerHTML={{ __html: post.blog_body }}
+        dangerouslySetInnerHTML={{ __html: post.body }}
       />
 
       {/* Like / Share / Comment */}
@@ -159,7 +161,7 @@ const Article = () => {
         </IconButton>
       </Box>
 
-      <Box mt={2} textAlign="right" fontStyle="italic" color="gray">
+      <Box mt={2} textAlign="center" fontStyle="italic" color="gray">
         Article by {post.created_by}
       </Box>
 
