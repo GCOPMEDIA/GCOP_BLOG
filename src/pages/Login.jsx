@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+
 import {
   Box,
   Button,
@@ -45,7 +46,7 @@ const Login = () => {
                       color: "white",
                       py: 3,}}
     >
-      <Paper elevation={3} sx={{ padding: 4, width: 350 }}>
+      <Paper elevation={3} sx={{ padding: 4, width: 350 ,background: "rgba(255, 255, 255, 0.25)"}} className='login-container'>
         <Typography variant="h5" gutterBottom align="center">
           Login
         </Typography>
@@ -79,9 +80,9 @@ const Login = () => {
           </Button>
 
         </form>
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        <Typography variant="body1" align="center" sx={{ mt: 2 }}>
   Don't have an account?{' '}
-  <Link to="/signup" style={{ textDecoration: 'underline', color: '#4A148C' }}>
+  <Link to="/signup" style={{ textDecoration: 'underline', color: 'rgba(73, 12, 85, 0.8)' }}>
     Signup instead
   </Link>
 </Typography>
