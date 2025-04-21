@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Article from './pages/Post';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 
@@ -49,6 +51,10 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/article/:id" element={<Article />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            {/* Add more routes as needed */}
+            <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
           <Footer />
         </div>
