@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Card,
@@ -8,21 +9,28 @@ import {
   IconButton,
   Modal,
   Button,
-  TextField
+  TextField,
+  darken
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 
-const BlogGrid = ( props ) => {
+const BlogGrid = () => {
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+      axios.get('http://localhost:8000/all-posts/')
+        .then(response => {
+          setPosts(response.data);
+        })
+        .catch(error => {
+          console.error("Error fetching posts:", error);
+        });
+    }, []);
   const [openModal, setOpenModal] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
 
-  const [likes, setLikes] = useState(
-    props.blogCards.reduce((acc, card) => {
-      acc[card.id] = card.like_count || 0;
-      return acc;
-    }, {})
-  );
+  const [likes, setLikes] = useState(0);
 
   const handleLike = (id) => {
     setLikes((prev) => ({
@@ -30,6 +38,7 @@ const BlogGrid = ( props ) => {
       [id]: prev[id] + 1
     }));
   };
+
 
   const handleShare = (url) => {
     setShareUrl(window.location.origin + url);
@@ -51,7 +60,7 @@ const BlogGrid = ( props ) => {
           backgroundColor: "rgba(0, 0, 0, 0.6)"
         }}
       >
-        {props.blogCards.map((card, idx) => (
+        {posts.map((card, idx) => (
           <Card
             key={idx}
             sx={{
@@ -150,7 +159,7 @@ const BlogGrid = ( props ) => {
                 <FavoriteBorderIcon />
               </IconButton>
               <Typography sx={{ color: "white", fontWeight: "bold" }}>
-                {likes[card.id] || 0}
+                {card.like_count }
               </Typography>
               <IconButton
                 onClick={(e) => {
