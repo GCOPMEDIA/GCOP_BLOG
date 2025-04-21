@@ -17,26 +17,50 @@ import CommentIcon from '@mui/icons-material/Comment';
 
 const Article = () => {
     const [posts, setPosts] = useState([]);
-
+    const [likes, setLikes] = useState(0);
     useEffect(() => {
       axios.get('http://localhost:8000/all-posts/')
         .then(response => {
           setPosts(response.data);
+          
         })
         .catch(error => {
           console.error("Error fetching posts:", error);
         });
     }, []);
+    useEffect(() => {
+        axios.get('http://localhost:8000/csrf/')
+          .then(res => {
+            axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
+          });
+      }, []);
+      
 
     const { id } = useParams();
     const post = posts.find((p) => p.id.toString() === id);
-  const [likes, setLikes] = useState(0);
+    useEffect(() => {
+        if (post) {
+          setLikes(post.like_count);
+        }
+      }, [post]);
+ 
   const [snack, setSnack] = useState({ open: false, message: '' });
+  
+  
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
-  const handleLike = () => setLikes(prev => prev + 1);
+  const handleLike = () => {
+    axios.post(`http://localhost:8000/like-post/${post.id}/`)
+      .then(res => {
+        setLikes(res.data.likes);
+      })
+      .catch(err => {
+        console.error("Failed to like:", err);
+      });
+  };
+  
 
   const handleShare = async () => {
     const fullUrl = window.location.href;
@@ -148,7 +172,7 @@ const Article = () => {
         <IconButton onClick={handleLike} sx={{ color: 'white' }}>
           <FavoriteIcon />
           <Typography variant="body2" ml={1}>{likes}</Typography>
-        </IconButton>
+          </IconButton>
 
         <IconButton onClick={handleShare} sx={{ color: 'white' }}>
           <ShareIcon />
