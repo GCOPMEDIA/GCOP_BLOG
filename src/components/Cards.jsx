@@ -30,14 +30,23 @@ const BlogGrid = () => {
   const [openModal, setOpenModal] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
 
-  const [likes, setLikes] = useState(0);
+  
 
   const handleLike = (id) => {
-    setLikes((prev) => ({
-      ...prev,
-      [id]: prev[id] + 1
-    }));
+    axios.post(`http://localhost:8000/like-post/${id}/`)
+      .then((res) => {
+        // Update post list with new like count
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.blog_id === id ? { ...post, like_count: res.data.likes } : post
+          )
+        );
+      })
+      .catch((err) => {
+        console.error("Failed to like:", err);
+      });
   };
+  
 
 
   const handleShare = (url) => {
