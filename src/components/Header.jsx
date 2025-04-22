@@ -3,6 +3,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
+import { isAuthenticated, getUsername, removeToken, removeUsername } from '../utils/auth';
+import { Menu, MenuItem, Avatar } from '@mui/material';
 
 const Header = () => {
   const theme = useTheme();
@@ -12,12 +14,27 @@ const Header = () => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openMenu = (e) => setAnchorEl(e.currentTarget);
+  const closeMenu = () => setAnchorEl(null);
+
+  const handleLogout = () => {
+    removeToken();
+    removeUsername();
+    closeMenu();
+    window.location.href = '/'; // or use navigate('/')
+  };
+
+  const username = getUsername();
+  const profileInitials = username ? username.charAt(0).toUpperCase() : '';
+
+  const loggedIn = isAuthenticated();
 
   const navLinks = [
     { name: 'Home', url: '/', external: false },
     { name: 'About', url: '/about/', external: false },
-    { name: 'Login/Signup', url: '/login', external: false },
     { name: 'GCOP Gallery', url: 'https://gcopmedia.pixieset.com/gcopinternationalstemporarygallery/', external: true },
+    ...(loggedIn ? [] : [{ name: 'Login/Signup', url: '/login', external: false }]),
   ];
   
 
@@ -28,6 +45,18 @@ const Header = () => {
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             GCOP's Blog
           </Typography>
+          {loggedIn && (
+  <>
+    <IconButton onClick={openMenu} sx={{ ml: 2 }}>
+      <Avatar sx={{ bgcolor: 'white', color: 'black', fontSize: '14px' }}>
+        {profileInitials}
+      </Avatar>
+    </IconButton>
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+    </Menu>
+  </>
+)}
 
           {isMobile ? (
             <>
