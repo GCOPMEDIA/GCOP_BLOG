@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { saveToken, saveUsername } from '../utils/auth';
+// Inside Login component:
 
 import {
   Box,
@@ -10,11 +12,15 @@ import {
   Paper,
 } from '@mui/material';
 
+
+
 const Login = () => {
-  const [userDetails, setUserDetails] = useState({
-    username: '',
-    password: '',
-  });
+  const [userDetails, setUserDetails] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || '/'; // fallback route
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,14 +30,24 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('User Details:', userDetails);
-    setUserDetails({username: '',
-    password: '',})
-
-    // Here, you can send userDetails to your Django backend
+  
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/token/', userDetails);
+      const { access } = response.data;
+  
+      saveToken(access);
+      saveUsername(userDetails.username);
+  
+      const redirectTo = location.state?.from || '/';
+      navigate(redirectTo);
+    } catch (error) {
+      console.error('Login failed:', error);
+      alert('Invalid credentials');
+    }
   };
+  
 
   return (
     <Box
@@ -39,17 +55,24 @@ const Login = () => {
       justifyContent="center"
       alignItems="center"
       minHeight="100vh"
-      sx={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('/images/background.png')`,
-                      backgroundSize: "cover",
-                      backgroundRepeat: "no-repeat",
-                      backgroundAttachment: "fixed",
-                      color: "white",
-                      py: 3,}}
+      sx={{
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('/images/background.png')`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        color: 'white',
+        py: 3,
+      }}
     >
-      <Paper elevation={3} sx={{ padding: 4, width: 350 ,background: "rgba(255, 255, 255, 0.25)"}} className='login-container'>
-        <Typography variant="h5" gutterBottom align="center">
-          Login
-        </Typography>
+      <Paper elevation={3} sx={{ padding: 4, width: 350, background: 'rgba(255, 255, 255, 0.25)' }}>
+        <Typography variant="h5" gutterBottom align="center">Login</Typography>
+
+        {error && (
+          <Typography variant="body2" color="error" align="center">
+            {error}
+          </Typography>
+        )}
+
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -78,15 +101,14 @@ const Login = () => {
           >
             Login
           </Button>
-
         </form>
-        <Typography variant="body1" align="center" sx={{ mt: 2 }}>
-  Don't have an account?{' '}
-  <Link to="/signup" style={{ textDecoration: 'underline', color: 'rgba(73, 12, 85, 0.8)' }}>
-    Signup instead
-  </Link>
-</Typography>
 
+        <Typography variant="body1" align="center" sx={{ mt: 2 }}>
+          Don't have an account?{' '}
+          <Link to="/signup" style={{ textDecoration: 'underline', color: 'rgba(73, 12, 85, 0.8)' }}>
+            Signup instead
+          </Link>
+        </Typography>
       </Paper>
     </Box>
   );
