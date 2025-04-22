@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Box,
@@ -10,48 +10,71 @@ import {
   Modal,
   Button,
   TextField,
-  darken
+  Snackbar
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 
 const BlogGrid = () => {
-    const [posts, setPosts] = useState([]);
-
-    useEffect(() => {
-      axios.get('https://print-gurus.onrender.com/all-posts/')
-        .then(response => {
-          setPosts(response.data);
-        })
-        .catch(error => {
-          console.error("Error fetching posts:", error);
-        });
-    }, []);
+  const [posts, setPosts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
+  const [snack, setSnack] = useState({ open: false, message: '' });
 
-  
+  useEffect(() => {
+    axios.get('https://print-gurus.onrender.com/all-posts/')
+      .then(response => {
+        setPosts(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching posts:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get('https://print-gurus.onrender.com/csrf/')
+      .then(res => {
+        axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
+      });
+  }, []);
 
   const handleLike = (id) => {
     axios.post(`https://print-gurus.onrender.com/like-post/${id}/`)
-      .then((res) => {
-        // Update post list with new like count
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.blog_id === id ? { ...post, like_count: res.data.likes } : post
+      .then(res => {
+        setPosts(prevPosts => 
+          prevPosts.map(post => 
+            post.id === id ? { ...post, like_count: res.data.likes } : post
           )
         );
       })
-      .catch((err) => {
+      .catch(err => {
         console.error("Failed to like:", err);
       });
   };
-  
 
+  const handleShare = async (url) => {
+    const fullUrl = window.location.origin + url;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Check out this blog post", url: fullUrl });
+      } catch (err) {
+        console.error("Share failed:", err);
+      }
+    } else {
+      setShareUrl(fullUrl);
+      setOpenModal(true);
+    }
+  };
 
-  const handleShare = (url) => {
-    setShareUrl(window.location.origin + url);
-    setOpenModal(true);
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setSnack({ open: true, message: 'Link copied to clipboard!' });
+      setOpenModal(false);
+    } catch (err) {
+      console.error(err);
+      setSnack({ open: true, message: 'Failed to copy link' });
+    }
   };
 
   return (
@@ -168,7 +191,7 @@ const BlogGrid = () => {
                 <FavoriteBorderIcon />
               </IconButton>
               <Typography sx={{ color: "white", fontWeight: "bold" }}>
-                {card.like_count }
+                {card.like_count}
               </Typography>
               <IconButton
                 onClick={(e) => {
@@ -220,12 +243,20 @@ const BlogGrid = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigator.clipboard.writeText(shareUrl)}
+            onClick={handleCopyLink}
           >
             Copy Link
           </Button>
         </Box>
       </Modal>
+
+      {/* Snackbar for Share */}
+      <Snackbar
+        open={snack.open}
+        onClose={() => setSnack({ open: false, message: '' })}
+        message={snack.message}
+        autoHideDuration={3000}
+      />
     </>
   );
 };
