@@ -104,7 +104,7 @@ const Footer = () => {
                 <AndroidIcon />
               </IconButton>
             </Typography>
-            <audio id="radio-player" controls autoPlay style={{ marginTop: '10px' }} />
+            <audio  id="radio-player" controls autoPlay style={{ marginTop: '10px' }} src="https://stream.zeno.fm/4vkingghydivv"/>
           </Grid>
         </Grid>
 
