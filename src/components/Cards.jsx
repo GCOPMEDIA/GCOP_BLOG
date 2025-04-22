@@ -19,7 +19,7 @@ const BlogGrid = () => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-      axios.get('http://localhost:8000/all-posts/')
+      axios.get('https://print-gurus.onrender.com/all-posts/')
         .then(response => {
           setPosts(response.data);
         })
@@ -33,7 +33,7 @@ const BlogGrid = () => {
   
 
   const handleLike = (id) => {
-    axios.post(`http://localhost:8000/like-post/${id}/`)
+    axios.post(`https://print-gurus.onrender.com/like-post/${id}/`)
       .then((res) => {
         // Update post list with new like count
         setPosts((prevPosts) =>
