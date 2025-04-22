@@ -19,7 +19,7 @@ const Article = () => {
     const [posts, setPosts] = useState([]);
     const [likes, setLikes] = useState(0);
     useEffect(() => {
-      axios.get('http://localhost:8000/all-posts/')
+      axios.get('https://print-gurus.onrender.com/all-posts/')
         .then(response => {
           setPosts(response.data);
           
@@ -29,7 +29,7 @@ const Article = () => {
         });
     }, []);
     useEffect(() => {
-        axios.get('http://localhost:8000/csrf/')
+        axios.get('https://print-gurus.onrender.com/csrf/')
           .then(res => {
             axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
           });
@@ -52,7 +52,7 @@ const Article = () => {
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
   const handleLike = () => {
-    axios.post(`http://localhost:8000/like-post/${post.id}/`)
+    axios.post(`https://print-gurus.onrender.com/like-post/${post.id}/`)
       .then(res => {
         setLikes(res.data.likes);
       })
