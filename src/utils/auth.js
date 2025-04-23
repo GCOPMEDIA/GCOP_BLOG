@@ -8,3 +8,8 @@ export const getUsername = () => localStorage.getItem('username');
 export const removeUsername = () => localStorage.removeItem('username');
 
 export const isAuthenticated = () => !!getToken();
+export const saveIsAuthenticated = (isAuthenticated) => localStorage.setItem('isAuthenticated', isAuthenticated);
+export const removeIsAuthenticated = () => localStorage.removeItem('isAuthenticated');
+
+
+
