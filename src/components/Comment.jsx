@@ -10,16 +10,25 @@ import {
 } from '@mui/material';
 import ReplyIcon from '@mui/icons-material/Reply';
 import axios from 'axios';
+import {Link} from "react-router-dom"
+import {getToken,isAuthenticated} from '../utils/auth';
 
 const CommentItem = ({ comment, postId, refresh }) => {
   const [showReply, setShowReply] = useState(false);
   const [replyText, setReplyText] = useState('');
+  const [change,setChange] = useState(false)
+  const getToken = localStorage.getItem('token')
+  const isAuthenticated = localStorage.getItem('isAuthenticated') 
+  
+
+  const handleChange = () => {
+    setChange(!change)}
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
 
     try {
-      await axios.post(`https://print-gurus.onrender.com/comments/${postId}/`, {
+      await axios.post(`http://127.0.0.1:8000/comments/${postId}/`, {
         text: replyText,
         parent: comment.id,
       });
@@ -67,11 +76,15 @@ const CommentItem = ({ comment, postId, refresh }) => {
 const Comment = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [mainText, setMainText] = useState('');
+  const token = getToken();
+  const isAuthenticated = !!token
 
+  
+  
   const fetchComments = () => {
-    axios.get(`https://print-gurus.onrender.com/comments/${postId}/`)
-      .then(res => setComments(res.data))
-      .catch(err => console.error(err));
+    axios.get(`http://127.0.0.1:8000/comments/${postId}/`)
+    .then(res => setComments(res.data))
+    .catch(err => console.error(err));
   };
 
   useEffect(() => {
@@ -80,33 +93,76 @@ const Comment = ({ postId }) => {
 
   const handlePost = async () => {
     if (!mainText.trim()) return;
-
+  
     try {
-      await axios.post(`https://print-gurus.onrender.com/comments/${postId}/`, {
-        text: mainText,
-        parent: null,
+      const token = localStorage.getItem('token');
+      const res = await axios.get('http://127.0.0.1:8000/check', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+      console.log(res.data);
       setMainText('');
       fetchComments();
     } catch (err) {
       console.error('Post failed:', err);
     }
   };
+  
+  
+  
 
   return (
     <Box>
       {/* Comment Form */}
       <Box mb={3} display="flex" gap={1}>
-        <TextField
-          fullWidth
-          multiline
-          minRows={2}
-          placeholder="Add a comment..."
-          value={mainText}
-          onChange={(e) => setMainText(e.target.value)}
-          sx={{ backgroundColor: 'white', borderRadius: 1 }}
-        />
-        <Button onClick={handlePost} variant="contained">Post</Button>
+      <TextField
+  multiline
+  minRows={2}
+  placeholder="Add a comment..."
+  value={mainText}
+  onChange={(e) => setMainText(e.target.value)}
+  sx={{
+    width: '400px', // adjust as needed
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    border: '1.5px solid rgba(73, 12, 85, 1)',
+    borderRadius: 3,
+  }}
+/>
+
+        { isAuthenticated ? 
+        (<Button onClick={handlePost} variant="contained" sx={{
+      textTransform: 'none',
+      backgroundColor: 'rgba(73, 12, 85, 0.8)',
+      color:'white',
+      borderColor: 'white',
+      '&:hover': {
+        backgroundColor: 'rgba(98, 15, 115, 1)',
+        borderColor: 'white',
+      },
+      textAlign:"center",
+    
+      fontSize:"medium",
+      fontWeight:"bold",
+    }}>Post</Button>) : 
+        <Button component={Link} to="/login"variant="outlined"
+    sx={{
+      textTransform: 'none',
+      backgroundColor: 'rgba(73, 12, 85, 0.8)',
+      color:'white',
+      borderColor: 'white',
+      '&:hover': {
+        backgroundColor: 'rgba(98, 15, 115, 1)',
+        borderColor: 'white',
+      },
+      textAlign:"center",
+    
+      fontSize:"medium",
+      fontWeight:"bold",
+    }}
+  >
+    Sign In to Comment
+  </Button>}
       </Box>
 
       {/* Render Comments */}
