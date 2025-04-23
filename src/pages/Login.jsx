@@ -34,18 +34,21 @@ const Login = () => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/token/', userDetails);
+      const response = await axios.post('https://print-gurus.onrender.com/api/token/', userDetails);
       const { access } = response.data;
   
       saveToken(access);
       saveUsername(userDetails.username);
   
       const redirectTo = location.state?.from || '/';
+      
       navigate(redirectTo);
+      window.location.reload(); 
     } catch (error) {
       console.error('Login failed:', error);
       alert('Invalid credentials');
     }
+    setUserDetails({ username: '', password: '' });
   };
   
 

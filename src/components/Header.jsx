@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Box, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -28,7 +28,26 @@ const Header = () => {
   const username = getUsername();
   const profileInitials = username ? username.charAt(0).toUpperCase() : '';
 
-  const loggedIn = isAuthenticated();
+  const [loggedIn,setLoggedIN] = useState(false);
+  const checkAuth =()=>{
+    if (isAuthenticated()) {
+      setLoggedIN(true);
+    } else {
+      setLoggedIN(false);
+    }
+    console.log('Logged In:', loggedIn);
+  }
+  useEffect(() => {
+    checkAuth(); // run once on mount
+  
+    const handleStorageChange = () => {
+      checkAuth(); // re-check if localStorage changes
+    };
+  
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
 
   const navLinks = [
     { name: 'Home', url: '/', external: false },
@@ -45,18 +64,8 @@ const Header = () => {
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             GCOP's Blog
           </Typography>
-          {loggedIn && (
-  <>
-    <IconButton onClick={openMenu} sx={{ ml: 2 }}>
-      <Avatar sx={{ bgcolor: 'white', color: 'black', fontSize: '14px' }}>
-        {profileInitials}
-      </Avatar>
-    </IconButton>
-    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
-    </Menu>
-  </>
-)}
+          
+          
 
           {isMobile ? (
             <>
@@ -110,6 +119,18 @@ const Header = () => {
 
             </Box>
           )}
+          {loggedIn && (
+  <>
+    <IconButton onClick={openMenu} sx={{ ml: 2 }}>
+      <Avatar sx={{ bgcolor: 'white', color: 'black', fontSize: '14px' }}>
+        {profileInitials}
+      </Avatar>
+    </IconButton>
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+    </Menu>
+  </>
+)}
         </Toolbar>
       </AppBar>
 

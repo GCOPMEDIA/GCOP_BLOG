@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
+import Comment from "./Comment";
 
 const BlogGrid = () => {
   const [posts, setPosts] = useState([]);
@@ -206,6 +207,7 @@ const BlogGrid = () => {
               >
                 <ShareIcon />
               </IconButton>
+              <Comment postId={card.id} />
             </Box>
           </Card>
         ))}

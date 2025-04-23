@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import CommentIcon from '@mui/icons-material/Comment';
+import Comment from '../components/Comment';
 
 
 const Article = () => {
@@ -178,11 +178,9 @@ const Article = () => {
           <ShareIcon />
           <Typography variant="body2" ml={1}>Share</Typography>
         </IconButton>
+        <Comment postId={post.id} />
 
-        <IconButton sx={{ color: 'white' }}>
-          <CommentIcon />
-          <Typography variant="body2" ml={1}>Comment</Typography>
-        </IconButton>
+        
       </Box>
 
       <Box mt={2} textAlign="center" fontStyle="italic" color="gray">
