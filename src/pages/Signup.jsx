@@ -19,7 +19,7 @@ const Signup = () => {
   const [Changes,setChanges] = useState(true)
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isCurrentStepValid, setIsCurrentStepValid] = useState(false);
   const [formData, setFormData] = useState({
     f_name:'',
     l_name:'',
@@ -36,9 +36,10 @@ const Signup = () => {
       [name]: value,
     }));
   
-    validateField(name, value);
-    setChanges(false);
+    const valid = validateField(name, value);
+    setIsCurrentStepValid(valid);
   };
+  
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
     console.log(showPassword)
@@ -47,7 +48,6 @@ const Signup = () => {
   
   const validateField = (name, value) => {
     let error = '';
-  
     switch (name) {
       case 'f_name':
       case 'l_name':
@@ -75,6 +75,7 @@ const Signup = () => {
     return error === '';
   };
   
+  
 
   const handleNext = () => {
     const fieldNames = ['f_name', 'l_name', 'username', 'email', 'password'];
@@ -83,9 +84,10 @@ const Signup = () => {
   
     if (isValid && step < 5) {
       setStep(step + 1);
-      setChanges(true);
+      setIsCurrentStepValid(false); // reset for next field
     }
   };
+  
   
 
 
@@ -101,9 +103,9 @@ const Signup = () => {
         body: JSON.stringify(formData),
       });
   
+      const data = await response.json();
+  
       if (response.ok) {
-        const data = await response.json();
-        
         setFormData({
           f_name: '',
           l_name: '',
@@ -112,17 +114,17 @@ const Signup = () => {
           password: '',
         });
         setStep(1);
-        navigate('/login'); // Redirect after successful signup
+        navigate('/login');
       } else {
-        const errorData = await response.json();
-        console.error('Signup failed:', errorData);
-        alert('Signup failed. Please check your inputs or try again.');
+        // Show specific error from the server
+        alert(data.error || 'Signup failed. Please check your inputs.');
       }
     } catch (error) {
       console.error('Error during signup:', error);
       alert('Network error. Please try again.');
     }
   };
+  
   
 
   const renderField = () => {
@@ -249,28 +251,53 @@ const Signup = () => {
           </Fade>
 
           {step < 5 ? (
-            <Fade in timeout={5000}>
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{ mt: 2, backgroundColor: 'rgba(73, 12, 85, 0.8)' }}
-              onClick={handleNext}
-              disabled={Changes }
-            >
-              Next
-            </Button></Fade>
-          ) : (
-            <Fade in timeout={500}>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              sx={{ mt: 2, backgroundColor: 'rgba(98, 15, 115, 0.8)' }}
-              disabled={Boolean(formErrors.f_name)}
-            >
-              Submit
-            </Button></Fade>
-          )}
+  <Fade in timeout={500}>
+    <Box display="flex" gap={1} mt={2}>
+      {step > 1 && (
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => setStep(step - 1)}
+          sx={{ backgroundColor: 'rgba(144, 6, 171, 0.54)', color: 'white' }}
+        >
+          Previous
+        </Button>
+      )}
+      <Button
+        variant="contained"
+        fullWidth
+        onClick={handleNext}
+        disabled={!isCurrentStepValid}
+        sx={{ backgroundColor: 'rgba(73, 12, 85, 0.8)' }}
+      >
+        Next
+      </Button>
+    </Box>
+  </Fade>
+) : (
+  <Fade in timeout={500}>
+    <Box display="flex" gap={1} mt={2}>
+      <Button
+        variant="outlined"
+        fullWidth
+        onClick={() => setStep(step - 1)}
+        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'white' }}
+      >
+        Previous
+      </Button>
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        disabled={!isCurrentStepValid}
+        sx={{ backgroundColor: 'rgba(98, 15, 115, 0.8)' }}
+      >
+        Submit
+      </Button>
+    </Box>
+  </Fade>
+)}
+
         </form>
       </Paper>
     </Box>
