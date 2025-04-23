@@ -207,7 +207,7 @@ const BlogGrid = () => {
               >
                 <ShareIcon />
               </IconButton>
-              <Comment postId={card.id} />
+              
             </Box>
           </Card>
         ))}
