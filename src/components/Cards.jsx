@@ -33,14 +33,14 @@ const BlogGrid = () => {
   }, []);
 
   useEffect(() => {
-    axios.get(' https://print-gurus.onrender.com/csrf/')
+    axios.get('https://print-gurus.onrender.com/csrf/')
       .then(res => {
         axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
       });
   }, []);
 
   const handleLike = (id) => {
-    axios.post(` https://print-gurus.onrender.com/like-post/${id}/`)
+    axios.post(`https://print-gurus.onrender.com/like-post/${id}/`)
       .then(res => {
         setPosts(prevPosts => 
           prevPosts.map(post => 
