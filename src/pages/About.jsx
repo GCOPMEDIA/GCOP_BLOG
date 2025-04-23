@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import ScrollTop from "../components/ScrollTop";
 import Footer from "../components/Footer";
+
 import {
   Box,
   Typography,
@@ -43,7 +44,7 @@ const AboutUs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(" https://print-gurus.onrender.com/about/")
+    axios.get(" http://127.0.0.1:8000/about/")
       .then((response) => {
         setMockLeaders(response.data);
         setLoading(false);
