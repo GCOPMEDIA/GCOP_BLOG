@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+
 import {
   Box,
   Button,
@@ -14,6 +17,9 @@ import {
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [Changes,setChanges] = useState(true)
+  const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     f_name:'',
     l_name:'',
@@ -24,26 +30,100 @@ const Signup = () => {
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    setChanges(false)
+  
+    validateField(name, value);
+    setChanges(false);
   };
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+    console.log(showPassword)
+  };
+  
+  
+  const validateField = (name, value) => {
+    let error = '';
+  
+    switch (name) {
+      case 'f_name':
+      case 'l_name':
+        if (value.trim().length < 2) error = 'Must be at least 2 characters';
+        break;
+      case 'username':
+        if (value.trim().length < 3) error = 'Username must be at least 3 characters';
+        break;
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) error = 'Invalid email address';
+        break;
+      case 'password':
+        if (value.length < 8) error = 'Password must be at least 8 characters';
+        break;
+      default:
+        break;
+    }
+  
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
+  
+    return error === '';
+  };
+  
 
   const handleNext = () => {
-    if (step < 5) setStep(step + 1);
-    setChanges(true)
+    const fieldNames = ['f_name', 'l_name', 'username', 'email', 'password'];
+    const currentField = fieldNames[step - 1];
+    const isValid = validateField(currentField, formData[currentField]);
+  
+    if (isValid && step < 5) {
+      setStep(step + 1);
+      setChanges(true);
+    }
   };
+  
 
-  const handleSubmit = (e) => {
+
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup Data:', formData);
-    // Submit to Django backend here
-    setFormData({ username: '', email: '', password: '' });
-    setStep(1);
-    navigate('/login'); // Redirect to login page after signup
+    try {
+      const response = await fetch(' https://print-gurus.onrender.com/api/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        
+        setFormData({
+          f_name: '',
+          l_name: '',
+          username: '',
+          email: '',
+          password: '',
+        });
+        setStep(1);
+        navigate('/login'); // Redirect after successful signup
+      } else {
+        const errorData = await response.json();
+        console.error('Signup failed:', errorData);
+        alert('Signup failed. Please check your inputs or try again.');
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+      alert('Network error. Please try again.');
+    }
   };
+  
 
   const renderField = () => {
     switch (step) {
@@ -58,6 +138,8 @@ const Signup = () => {
                 onChange={handleChange}
                 margin="normal"
                 background="rgba(255, 255, 255, 0.25)"
+                error={Boolean(formErrors.f_name)}
+                helperText={formErrors.f_name}
               />
             );
             case 2:
@@ -71,6 +153,8 @@ const Signup = () => {
             onChange={handleChange}
             margin="normal"
             background="rgba(255, 255, 255, 0.25)"
+            error={Boolean(formErrors.l_name)}
+            helperText={formErrors.l_name}
           />
         );
             case 3:
@@ -84,6 +168,8 @@ const Signup = () => {
                     onChange={handleChange}
                     margin="normal"
                     background="rgba(255, 255, 255, 0.25)"
+                    error={Boolean(formErrors.username)}
+                    helperText={formErrors.username}
                   />
                 );
       case 4:
@@ -98,6 +184,8 @@ const Signup = () => {
             margin="normal"
             type="email"
             background="rgba(255, 255, 255, 0.25)"
+            error={Boolean(formErrors.email)}
+            helperText={formErrors.email}
           />
         );
       case 5:
@@ -110,8 +198,24 @@ const Signup = () => {
             value={formData.password}
             onChange={handleChange}
             margin="normal"
-            type="password"
+            type={showPassword ? "text" : "password"}
             background="rgba(255, 255, 255, 0.25)"    
+            error={Boolean(formErrors.password)}
+            helperText={formErrors.password}
+            InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              onClick={toggleShowPassword}
+              edge="end"
+              sx={{ color: 'white' }}
+              aria-label="toggle password visibility"
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
           />
         );
       default:
@@ -162,7 +266,7 @@ const Signup = () => {
               variant="contained"
               fullWidth
               sx={{ mt: 2, backgroundColor: 'rgba(98, 15, 115, 0.8)' }}
-              disabled={!formData.password}
+              disabled={Boolean(formErrors.f_name)}
             >
               Submit
             </Button></Fade>
