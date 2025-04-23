@@ -19,7 +19,7 @@ const Article = () => {
     const [posts, setPosts] = useState([]);
     const [likes, setLikes] = useState(0);
     useEffect(() => {
-      axios.get(' https://print-gurus.onrender.com/all-posts/')
+      axios.get('https://print-gurus.onrender.com/all-posts/')
         .then(response => {
           setPosts(response.data);
           
@@ -29,7 +29,7 @@ const Article = () => {
         });
     }, []);
     useEffect(() => {
-        axios.get(' https://print-gurus.onrender.com/csrf/')
+        axios.get('https://print-gurus.onrender.com/csrf/')
           .then(res => {
             axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
           });
@@ -52,7 +52,7 @@ const Article = () => {
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
   const handleLike = () => {
-    axios.post(` https://print-gurus.onrender.com/like-post/${post.id}/`)
+    axios.post(`https://print-gurus.onrender.com/like-post/${post.id}/`)
       .then(res => {
         setLikes(res.data.likes);
       })
@@ -178,10 +178,16 @@ const Article = () => {
           <ShareIcon />
           <Typography variant="body2" ml={1}>Share</Typography>
         </IconButton>
-        <Comment postId={post.id} />
-
-        
       </Box>
+      {/* Comments Section */}
+<Box mt={5} p={3} sx={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: 2 }}>
+  <Typography variant="h6" gutterBottom>
+    Comments
+  </Typography>
+
+  <Comment postId={post.id} />
+</Box>
+
 
       <Box mt={2} textAlign="center" fontStyle="italic" color="gray">
         Article by {post.created_by}
