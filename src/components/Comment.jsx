@@ -28,7 +28,7 @@ const CommentItem = ({ comment, postId, refresh }) => {
     if (!replyText.trim()) return;
 
     try {
-      await axios.post(`http://127.0.0.1:8000/comments/${postId}/`, {
+      await axios.post(`https://print-gurus.onrender.com/comments/${postId}/`, {
         text: replyText,
         parent: comment.id,
       });
@@ -82,7 +82,7 @@ const Comment = ({ postId }) => {
   
   
   const fetchComments = () => {
-    axios.get(`http://127.0.0.1:8000/comments/${postId}/`)
+    axios.get(`https://print-gurus.onrender.com/comments/${postId}/`)
     .then(res => setComments(res.data))
     .catch(err => console.error(err));
   };
@@ -96,7 +96,7 @@ const Comment = ({ postId }) => {
   
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://127.0.0.1:8000/check', {
+      const res = await axios.get('https://print-gurus.onrender.com/check', {
         headers: {
           Authorization: `Bearer ${token}`
         }
