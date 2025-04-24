@@ -83,7 +83,7 @@ const Article = () => {
     }
   };
   if (!post) {
-    return <Typography variant="h6" sx={{ p: 4 }}>Article not found</Typography>;
+    return <Typography variant="h6" sx={{ p: 4 }}>Article loading...</Typography>;
   }
   return (
     <main>
