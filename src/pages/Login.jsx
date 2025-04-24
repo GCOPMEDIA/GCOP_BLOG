@@ -34,7 +34,7 @@ const Login = () => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/token/', userDetails);
+      const response = await axios.post('https://print-gurus.onrender.com/api/token/', userDetails);
       const { access } = response.data;
   
       saveToken(access);
