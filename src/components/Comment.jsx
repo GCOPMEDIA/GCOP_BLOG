@@ -24,21 +24,21 @@ const CommentItem = ({ comment, postId, refresh }) => {
   const handleChange = () => {
     setChange(!change)}
 
-  const handleReply = async () => {
-    if (!replyText.trim()) return;
+  // const handleReply = async () => {
+  //   if (!replyText.trim()) return;
 
-    try {
-      await axios.post(`https://print-gurus.onrender.com/comments/${postId}/`, {
-        text: replyText,
-        parent: comment.id,
-      });
-      setReplyText('');
-      setShowReply(false);
-      refresh(); // Refetch comments
-    } catch (err) {
-      console.error('Reply failed:', err);
-    }
-  };
+  //   try {
+  //     await axios.post(`https://print-gurus.onrender.com/comments/${postId}/`, {
+  //       text: replyText,
+  //       parent: comment.id,
+  //     });
+  //     setReplyText('');
+  //     setShowReply(false);
+  //     refresh(); // Refetch comments
+  //   } catch (err) {
+  //     console.error('Reply failed:', err);
+  //   }
+  // };
 
   return (
     <Box ml={comment.parent ? 4 : 0} mb={2}>
@@ -65,7 +65,7 @@ const CommentItem = ({ comment, postId, refresh }) => {
               placeholder="Write a reply..."
               sx={{ backgroundColor: 'white', borderRadius: 1 }}
             />
-            <Button onClick={handleReply} variant="contained">Reply</Button>
+            {/* <Button onClick={handleReply} variant="contained">Reply</Button> */}
           </Box>
         </Collapse>
       </Box>
@@ -81,35 +81,36 @@ const Comment = ({ postId }) => {
 
   
   
-  const fetchComments = () => {
-    axios.get(`https://print-gurus.onrender.com/comments/${postId}/`)
-    .then(res => setComments(res.data))
-    .catch(err => console.error(err));
-  };
+  // const fetchComments = () => {
+  //   axios.get(`https://print-gurus.onrender.com/comments/${postId}/`)
+  //   .then(res => setComments(res.data))
+  //   .catch(err => console.error(err));
+  // };
 
-  useEffect(() => {
-    fetchComments();
-  }, [postId]);
+  // useEffect(() => {
+  //   fetchComments();
+  // }, [postId]);
   
 
   const handlePost = async () => {
     
     if (!mainText.trim()) return;
   
-    try {
+    // try {
       
-      const token = localStorage.getItem('token');
-      const res = await axios.get('https://print-gurus.onrender.com/check', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      console.log(res.data);
-      setMainText('');
-      fetchComments();
-    } catch (err) {
-      console.error('Post failed:', err);
-    }
+    //   const token = localStorage.getItem('token');
+    //   const res = await axios.get('https://print-gurus.onrender.com/check', {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`
+    //     }
+    //   });
+    //   console.log(res.data);
+    //   
+    //   fetchComments();
+    // } catch (err) {
+    //   console.error('Post failed:', err);
+    // }
+    setMainText('');
   };
   
   
@@ -176,7 +177,7 @@ const Comment = ({ postId }) => {
             <CommentItem
               comment={comment}
               postId={postId}
-              refresh={fetchComments}
+              // refresh={fetchComments}
             />
             {comments
               .filter(reply => reply.parent === comment.id)
@@ -185,7 +186,7 @@ const Comment = ({ postId }) => {
                   key={reply.id}
                   comment={reply}
                   postId={postId}
-                  refresh={fetchComments}
+                  // refresh={fetchComments}
                 />
               ))}
           </Box>
