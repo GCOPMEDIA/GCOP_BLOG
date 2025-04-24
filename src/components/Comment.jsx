@@ -90,11 +90,14 @@ const Comment = ({ postId }) => {
   useEffect(() => {
     fetchComments();
   }, [postId]);
+  
 
   const handlePost = async () => {
+    
     if (!mainText.trim()) return;
   
     try {
+      
       const token = localStorage.getItem('token');
       const res = await axios.get('https://print-gurus.onrender.com/check', {
         headers: {
