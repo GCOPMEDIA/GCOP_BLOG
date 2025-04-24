@@ -44,7 +44,7 @@ const AboutUs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(" http://127.0.0.1:8000/about/")
+    axios.get(" https://print-gurus.onrender.com/about/")
       .then((response) => {
         setMockLeaders(response.data);
         setLoading(false);
