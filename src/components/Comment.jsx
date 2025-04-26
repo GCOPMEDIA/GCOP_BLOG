@@ -12,6 +12,7 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import axios from 'axios';
 import {Link} from "react-router-dom"
 import {getToken,isAuthenticated} from '../utils/auth';
+import UserAvatar  from '../components/UserAvatar';
 
 const CommentItem = ({ comment, postId, refresh }) => {
   const [showReply, setShowReply] = useState(false);
@@ -43,10 +44,10 @@ const CommentItem = ({ comment, postId, refresh }) => {
   return (
     <Box ml={comment.parent ? 4 : 0} mb={2}>
       <Box display="flex" alignItems="center" gap={2}>
-        <Avatar src={comment.author_avatar} alt={comment.author_name} />
+        <UserAvatar username={comment.username} /> {/* Assuming you have a UserAvatar component */}
         <Box>
-          <Typography fontWeight="bold" color="white">{comment.author_name}</Typography>
-          <Typography color="white">{comment.text}</Typography>
+          <Typography fontWeight="bold" color="white">{comment.username}</Typography>
+          <Typography color="white">{comment.comment}</Typography>
         </Box>
       </Box>
 
@@ -73,126 +74,139 @@ const CommentItem = ({ comment, postId, refresh }) => {
   );
 };
 
+
+
 const Comment = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [mainText, setMainText] = useState('');
   const token = getToken();
-  const isAuthenticated = !!token
+  const isAuthenticated = !!token;
 
-  
-  
-  // const fetchComments = () => {
-  //   axios.get(`https://print-gurus.onrender.com/comments/${postId}/`)
-  //   .then(res => setComments(res.data))
-  //   .catch(err => console.error(err));
-  // };
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(`https://print-gurus.onrender.com/all-comments/?post_id=${postId}`);
+      setComments(res.data.comments); // Make sure to access the 'comments' key
+    } catch (err) {
+      console.error('Failed to fetch comments:', err.response?.data || err.message);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchComments();
-  // }, [postId]);
-  
+  useEffect(() => {
+    if (postId) {
+      fetchComments();
+    }
+  }, [postId]);
 
   const handlePost = async () => {
-    
     if (!mainText.trim()) return;
-  
-    // try {
-      
-    //   const token = localStorage.getItem('token');
-    //   const res = await axios.get('https://print-gurus.onrender.com/check', {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    //   });
-    //   console.log(res.data);
-    //   
-    //   fetchComments();
-    // } catch (err) {
-    //   console.error('Post failed:', err);
-    // }
+
+    const username = localStorage.getItem('username');
+    if (!username) {
+      console.error('No username found in localStorage');
+      return;
+    }
+
+    try {
+      await axios.post('http://127.0.0.1:8000/comment/', {
+        username: username,
+        post_id: postId,
+        comment: mainText
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Comment posted successfully');
+      fetchComments(); // Refresh comments after posting
+    } catch (err) {
+      console.error('Post failed:', err.response?.data || err.message);
+    }
+
     setMainText('');
   };
-  
-  
-  
 
   return (
     <Box>
       {/* Comment Form */}
       <Box mb={3} display="flex" gap={1}>
-      <TextField
-  multiline
-  minRows={2}
-  placeholder="Add a comment..."
-  value={mainText}
-  onChange={(e) => setMainText(e.target.value)}
-  sx={{
-    width: '400px', // adjust as needed
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    border: '1.5px solid rgba(73, 12, 85, 1)',
-    borderRadius: 3,
-  }}
-/>
+        <TextField
+          multiline
+          minRows={2}
+          placeholder="Add a comment..."
+          value={mainText}
+          onChange={(e) => setMainText(e.target.value)}
+          sx={{
+            width: '400px',
+            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            border: '1.5px solid rgba(73, 12, 85, 1)',
+            borderRadius: 3,
+          }}
+        />
 
-        { isAuthenticated ? 
-        (<Button onClick={handlePost} variant="contained" sx={{
-      textTransform: 'none',
-      backgroundColor: 'rgba(73, 12, 85, 0.8)',
-      color:'white',
-      borderColor: 'white',
-      '&:hover': {
-        backgroundColor: 'rgba(98, 15, 115, 1)',
-        borderColor: 'white',
-      },
-      textAlign:"center",
-    
-      fontSize:"medium",
-      fontWeight:"bold",
-    }}>Post</Button>) : 
-        <Button component={Link} to="/login"variant="outlined"
-    sx={{
-      textTransform: 'none',
-      backgroundColor: 'rgba(73, 12, 85, 0.8)',
-      color:'white',
-      borderColor: 'white',
-      '&:hover': {
-        backgroundColor: 'rgba(98, 15, 115, 1)',
-        borderColor: 'white',
-      },
-      textAlign:"center",
-    
-      fontSize:"medium",
-      fontWeight:"bold",
-    }}
-  >
-    Sign In to Comment
-  </Button>}
+        {isAuthenticated ? (
+          <Button 
+            onClick={handlePost} 
+            variant="contained"
+            sx={{
+              textTransform: 'none',
+              backgroundColor: 'rgba(73, 12, 85, 0.8)',
+              color: 'white',
+              borderColor: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(98, 15, 115, 1)',
+                borderColor: 'white',
+              },
+              textAlign: "center",
+              fontSize: "medium",
+              fontWeight: "bold",
+            }}
+          >
+            Post
+          </Button>
+        ) : (
+          <Button 
+            component={Link} 
+            to="/login"
+            variant="outlined"
+            sx={{
+              textTransform: 'none',
+              backgroundColor: 'rgba(73, 12, 85, 0.8)',
+              color: 'white',
+              borderColor: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(98, 15, 115, 1)',
+                borderColor: 'white',
+              },
+              textAlign: "center",
+              fontSize: "medium",
+              fontWeight: "bold",
+            }}
+          >
+            Sign In to Comment
+          </Button>
+        )}
       </Box>
 
       {/* Render Comments */}
-      {comments
-        .filter(comment => comment.parent === null)
-        .map((comment) => (
-          <Box key={comment.id}>
+      {comments.length > 0 ? (
+        comments.map((comment, index) => (
+          <Box key={index}>
             <CommentItem
               comment={comment}
               postId={postId}
-              // refresh={fetchComments}
+              refresh={fetchComments} // Pass fetchComments if CommentItem needs it
             />
-            {comments
-              .filter(reply => reply.parent === comment.id)
-              .map((reply) => (
-                <CommentItem
-                  key={reply.id}
-                  comment={reply}
-                  postId={postId}
-                  // refresh={fetchComments}
-                />
-              ))}
+            {/* If you have replies, render them here. */}
           </Box>
-        ))}
+        ))
+      ) : (
+        <p>No comments yet. Be the first to comment</p>
+      )}
     </Box>
   );
 };
 
 export default Comment;
+
+
