@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
 import { isAuthenticated, getUsername, removeToken, removeUsername } from '../utils/auth';
 import { Menu, MenuItem, Avatar } from '@mui/material';
+import UserAvatar from './UserAvatar'; // Assuming you have a UserAvatar component
 
 const Header = () => {
   const theme = useTheme();
@@ -122,9 +123,7 @@ const Header = () => {
           {loggedIn && (
   <>
     <IconButton onClick={openMenu} sx={{ ml: 2 }}>
-      <Avatar sx={{ bgcolor: 'white', color: 'black', fontSize: '14px' }}>
-        {profileInitials}
-      </Avatar>
+      <UserAvatar username={username}/>
     </IconButton>
     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMenu}>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
