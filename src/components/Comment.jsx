@@ -12,6 +12,7 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import axios from 'axios';
 import {Link} from "react-router-dom"
 import {getToken,isAuthenticated} from '../utils/auth';
+import { motion, AnimatePresence } from 'framer-motion';
 import UserAvatar  from '../components/UserAvatar';
 
 const CommentItem = ({ comment, postId, refresh }) => {
@@ -20,26 +21,29 @@ const CommentItem = ({ comment, postId, refresh }) => {
   const [change,setChange] = useState(false)
   const getToken = localStorage.getItem('token')
   const isAuthenticated = localStorage.getItem('isAuthenticated') 
+  const username = localStorage.getItem('username')
+
   
 
   const handleChange = () => {
     setChange(!change)}
 
-  // const handleReply = async () => {
-  //   if (!replyText.trim()) return;
+  const handleReply = async () => {
+    if (!replyText.trim()) return;
 
-  //   try {
-  //     await axios.post(`https://print-gurus.onrender.com/comments/${postId}/`, {
-  //       text: replyText,
-  //       parent: comment.id,
-  //     });
-  //     setReplyText('');
-  //     setShowReply(false);
-  //     refresh(); // Refetch comments
-  //   } catch (err) {
-  //     console.error('Reply failed:', err);
-  //   }
-  // };
+    try {
+      await axios.post(`https://print-gurus.onrender.com/reply/`, {
+        text: replyText,
+        parent: comment.id,
+        username:username
+      });
+      setReplyText('');
+      setShowReply(false);
+      refresh(); // Refetch comments
+    } catch (err) {
+      console.error('Reply failed:', err);
+    }
+  };
 
   return (
     <Box ml={comment.parent ? 4 : 0} mb={2}>
@@ -57,17 +61,50 @@ const CommentItem = ({ comment, postId, refresh }) => {
         </IconButton>
 
         <Collapse in={showReply}>
-          <Box display="flex" gap={1} mt={1}>
-            <TextField
-              fullWidth
-              size="small"
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder="Write a reply..."
-              sx={{ backgroundColor: 'white', borderRadius: 1 }}
-            />
-            {/* <Button onClick={handleReply} variant="contained">Reply</Button> */}
-          </Box>
+        <Box display="flex" gap={1} mt={1}>
+  <TextField
+    multiline
+    minRows={2}
+    value={replyText}
+    onChange={(e) => setReplyText(e.target.value)}
+    placeholder="Write a reply..."
+    sx={{
+      width: '400px',
+      backgroundColor: 'rgba(123, 123, 123, 0.5)',
+      border: '1.5px solid rgba(73, 12, 85, 1)',
+      borderRadius: 3,
+    }}
+  />
+  
+  <AnimatePresence>
+    {replyText.trim() && (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Button 
+          onClick={handleReply} 
+          variant="contained"
+          sx={{
+            textTransform: 'none',
+            background: 'linear-gradient(45deg, #6A1B9A, #8E24AA)',
+            color: 'white',
+            fontWeight: 'bold',
+            borderRadius: 2,
+            '&:hover': {
+              background: 'linear-gradient(45deg, #8E24AA, #6A1B9A)',
+            },
+          }}
+        >
+          Reply
+        </Button>
+      </motion.div>
+    )}
+  </AnimatePresence>
+</Box>
+
         </Collapse>
       </Box>
     </Box>
@@ -107,7 +144,7 @@ const Comment = ({ postId }) => {
     }
 
     try {
-      await axios.post('http://127.0.0.1:8000/comment/', {
+      await axios.post('https://print-gurus.onrender.com/comment/', {
         username: username,
         post_id: postId,
         comment: mainText
@@ -189,18 +226,20 @@ const Comment = ({ postId }) => {
       </Box>
 
       {/* Render Comments */}
-      {comments.length > 0 ? (
-        comments.map((comment, index) => (
-          <Box key={index}>
-            <CommentItem
-              comment={comment}
-              postId={postId}
-              refresh={fetchComments} // Pass fetchComments if CommentItem needs it
-            />
-            {/* If you have replies, render them here. */}
-          </Box>
-        ))
-      ) : (
+      {comments.length > 0 ? 
+        (comments.map((comment, index) => (
+  <Box key={index}>
+    <CommentItem comment={comment} postId={postId} refresh={fetchComments} />
+    
+    {/* Render replies */}
+    {comment.replies?.map((reply, replyIndex) => (
+      <Box key={replyIndex} ml={6}>
+        <CommentItem comment={reply} postId={postId} refresh={fetchComments} />
+      </Box>
+    ))}
+  </Box>
+)))
+ : (
         <p>No comments yet. Be the first to comment</p>
       )}
     </Box>
