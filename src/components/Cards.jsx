@@ -17,46 +17,49 @@ import ShareIcon from "@mui/icons-material/Share";
 import Comment from "./Comment";
 import Slider from "react-slick";
 
-const Slide = ()=>{
-     const fallbackImages = [
-          { title: "Welcome to Church", url: "/images/church1.jpg" },
-          { title: "Join Our Services", url: "/images/church2.jpg" },
-          { title: "Be Part of Our Community", url: "/images/church3.jpg" }
-        ];
-        const [items, setItems] = useState([]);
-        useEffect(() => {
-            axios.get("https://print-gurus.onrender.com/events/")
-              .then((response) => {
-                const fetchedItems = response.data.data;
-                if (fetchedItems.length === 0) {
-                  setItems(fallbackImages);
-                } else {
-                  setItems(fetchedItems);
-                }
-              })
-              .catch((error) => {
-                console.error("Error fetching events:", error);
-                setItems(fallbackImages);
-              });
-          }, []);
-          const carouselSettings = {
-            dots: true,
-            infinite: true,
-            speed: 1000,
-            slidesToShow: 1,
-            autoplay: true,
-            autoplaySpeed: 5000,
-            slidesToScroll: 1,
-            arrows: true
-          };
-      return(
-        <Box sx={{ position: "relative", overflow: "hidden" }}>
+const Slide = () => {
+  const fallbackImages = [
+    { title: "Welcome to Church", url: "/images/church1.jpg" },
+    { title: "Join Our Services", url: "/images/church2.jpg" },
+    { title: "Be Part of Our Community", url: "/images/church3.jpg" }
+  ];
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios.get("https://print-gurus.onrender.com/events/")
+      .then((response) => {
+        const fetchedItems = response.data.data;
+        if (fetchedItems.length === 0) {
+          setItems(fallbackImages);
+        } else {
+          setItems(fetchedItems);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+        setItems(fallbackImages);
+      });
+  }, []);
+
+  const carouselSettings = {
+    dots: true,
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    slidesToScroll: 1,
+    arrows: true
+  };
+
+  return (
+    <Box sx={{ position: "relative", overflow: "hidden" }}>
       <Slider {...carouselSettings}>
         {items.map((item, index) => (
           <Box
             key={index}
             sx={{
-              height: "70vh",
+              height: { xs: "50vh", sm: "60vh", md: "70vh" },  // 🎯 Responsive height
               position: "relative",
               display: "flex",
               alignItems: "center",
@@ -66,15 +69,19 @@ const Slide = ()=>{
                 : `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${item.url}) center/cover no-repeat`
             }}
           >
-            {item.url.endsWith(".mp4") ? (
+            {item.url.endsWith(".mp4") && (
               <video
                 src={item.url}
                 autoPlay
                 loop
                 muted
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover" // 🎯 Keeps video fully fitting
+                }}
               />
-            ) : null}
+            )}
             <Typography
               variant="h3"
               sx={{
@@ -82,7 +89,8 @@ const Slide = ()=>{
                 color: "white",
                 fontWeight: "bold",
                 textAlign: "center",
-                px: 2
+                px: 2,
+                fontSize: { xs: "1.5rem", sm: "2rem", md: "3rem" } // 🎯 Responsive font size
               }}
             >
               {item.title}
@@ -91,8 +99,9 @@ const Slide = ()=>{
         ))}
       </Slider>
     </Box>
-      )
-}
+  );
+};
+
 
 const BlogGrid = () => {
   const [posts, setPosts] = useState([]);
@@ -159,18 +168,20 @@ const BlogGrid = () => {
   return (
     <>
       <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "1fr 1fr",
-            md: "1fr 1fr 1fr"
-          },
-          gap: 3,
-          p: 4,
-          backgroundColor: "rgba(0, 0, 0, 0.6)"
-        }}
-      >
+  sx={{
+    display: "grid",
+    gridTemplateColumns: {
+      xs: "1fr",
+      sm: "1fr 1fr",
+      md: "1fr 1fr 1fr"
+    },
+    gap: 3,
+    p: { xs: 1, sm: 2, md: 4 }, // <-- responsive padding
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    alignItems: "stretch"
+  }}
+>
+
         {posts.map((card, idx) => (
           <Card
             key={idx}
