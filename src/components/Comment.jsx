@@ -54,7 +54,7 @@ const CommentItem = ({ comment, postId, refresh }) => {
           <Typography color="white">{comment.comment}</Typography>
         </Box>
       </Box>
-
+      {comment.type === "comment" &&(
       <Box mt={1} ml={6}>
         <IconButton size="small" onClick={() => setShowReply(!showReply)}>
           <ReplyIcon fontSize="small" sx={{ color: 'gray' }} />
@@ -106,7 +106,7 @@ const CommentItem = ({ comment, postId, refresh }) => {
 </Box>
 
         </Collapse>
-      </Box>
+      </Box>)}
     </Box>
   );
 };
