@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Avatar,
   Box,
   Typography,
   TextField,
@@ -11,7 +10,7 @@ import {
 import ReplyIcon from '@mui/icons-material/Reply';
 import axios from 'axios';
 import {Link} from "react-router-dom"
-import {getToken,isAuthenticated} from '../utils/auth';
+import {getToken} from '../utils/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import UserAvatar  from '../components/UserAvatar';
 
