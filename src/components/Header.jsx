@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Typography, Box, IconButton, Drawer, List, ListItem, L
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
 import { isAuthenticated, getUsername, removeToken, removeUsername } from '../utils/auth';
-import { Menu, MenuItem, Avatar } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import UserAvatar from './UserAvatar'; // Assuming you have a UserAvatar component
 
 const Header = () => {
