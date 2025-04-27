@@ -52,6 +52,7 @@ const AboutUs = () => {
         setLoading(false);
       });
   }, []);
+  
 
   const { first_leader, clergy, elder, deacons, workers } = mockLeaders;
   console.log(mockLeaders);
