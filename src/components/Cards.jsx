@@ -15,6 +15,84 @@ import {
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import Comment from "./Comment";
+import Slider from "react-slick";
+
+const Slide = ()=>{
+     const fallbackImages = [
+          { title: "Welcome to Church", url: "/images/church1.jpg" },
+          { title: "Join Our Services", url: "/images/church2.jpg" },
+          { title: "Be Part of Our Community", url: "/images/church3.jpg" }
+        ];
+        const [items, setItems] = useState([]);
+        useEffect(() => {
+            axios.get("https://print-gurus.onrender.com/events/")
+              .then((response) => {
+                const fetchedItems = response.data.data;
+                if (fetchedItems.length === 0) {
+                  setItems(fallbackImages);
+                } else {
+                  setItems(fetchedItems);
+                }
+              })
+              .catch((error) => {
+                console.error("Error fetching events:", error);
+                setItems(fallbackImages);
+              });
+          }, []);
+          const carouselSettings = {
+            dots: true,
+            infinite: true,
+            speed: 1000,
+            slidesToShow: 1,
+            autoplay: true,
+            autoplaySpeed: 5000,
+            slidesToScroll: 1,
+            arrows: true
+          };
+      return(
+        <Box sx={{ position: "relative", overflow: "hidden" }}>
+      <Slider {...carouselSettings}>
+        {items.map((item, index) => (
+          <Box
+            key={index}
+            sx={{
+              height: "70vh",
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: item.url.endsWith(".mp4")
+                ? "black"
+                : `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${item.url}) center/cover no-repeat`
+            }}
+          >
+            {item.url.endsWith(".mp4") ? (
+              <video
+                src={item.url}
+                autoPlay
+                loop
+                muted
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : null}
+            <Typography
+              variant="h3"
+              sx={{
+                position: "absolute",
+                color: "white",
+                fontWeight: "bold",
+                textAlign: "center",
+                px: 2
+              }}
+            >
+              {item.title}
+            </Typography>
+          </Box>
+        ))}
+      </Slider>
+    </Box>
+      )
+}
 
 const BlogGrid = () => {
   const [posts, setPosts] = useState([]);
@@ -264,3 +342,4 @@ const BlogGrid = () => {
 };
 
 export default BlogGrid;
+export { Slide };
