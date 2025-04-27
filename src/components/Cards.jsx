@@ -59,14 +59,14 @@ const Slide = () => {
           <Box
             key={index}
             sx={{
-              height: { xs: "50vh", sm: "60vh", md: "70vh" },  // 🎯 Responsive height
+              height: { xs: "40vh", sm: "50vh", md: "70vh" },  // 🎯 Responsive height
               position: "relative",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               background: item.url.endsWith(".mp4")
                 ? "black"
-                : `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${item.url}) center/cover no-repeat`
+                : `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${item.url}) center/contain no-repeat`
             }}
           >
             {item.url.endsWith(".mp4") && (
@@ -78,7 +78,7 @@ const Slide = () => {
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover" // 🎯 Keeps video fully fitting
+                  objectFit: "contain" // 🎯 Keeps video fully fitting
                 }}
               />
             )}
