@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "../components/Header";
-import ScrollTop from "../components/ScrollTop";
-import Footer from "../components/Footer";
+import Background from "../components/Background";
 
 import {
   Box,
@@ -68,17 +66,8 @@ const AboutUs = () => {
 
   return (
     <main>
-      <Box
-        sx={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('/images/background.png')`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          color: "white",
-          py: 4,
-        }}
-      >
-        <Container>
+         <Background children=
+         <Container>
           <Typography variant="h3" align="center" fontWeight="bold" gutterBottom>
             About Us
           </Typography>
@@ -128,8 +117,7 @@ const AboutUs = () => {
               </Grid>
             </Box>
           ))}
-        </Container>
-      </Box>
+        </Container> />
     </main>
   );
 };
