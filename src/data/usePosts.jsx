@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const BlogGrid = () => {useEffect(() => {
-    axios.get(' https://print-gurus.onrender.com/all-posts/')
+    axios.get(' https://print-gurus-jmfg.onrender.com/all-posts/')
       .then(response => {
         return response.data;
       })
@@ -12,7 +12,7 @@ const BlogGrid = () => {useEffect(() => {
   }, []);
 
   useEffect(() => {
-    axios.get('https://print-gurus.onrender.com/csrf/')
+    axios.get('https://print-gurus-jmfg.onrender.com/csrf/')
       .then(res => {
         axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
       });
