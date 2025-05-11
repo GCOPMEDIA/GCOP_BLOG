@@ -31,7 +31,7 @@ const CommentItem = ({ comment, postId, refresh }) => {
     if (!replyText.trim()) return;
 
     try {
-      await axios.post(`https://print-gurus.onrender.com/reply/`, {
+      await axios.post(`https://print-gurus-jmfg.onrender.com/reply/`, {
         text: replyText,
         parent: comment.id,
         username:username
@@ -120,7 +120,7 @@ const Comment = ({ postId }) => {
 
   const fetchComments = async () => {
     try {
-      const res = await axios.get(`https://print-gurus.onrender.com/all-comments/?post_id=${postId}`);
+      const res = await axios.get(`https://print-gurus-jmfg.onrender.com/all-comments/?post_id=${postId}`);
       setComments(res.data.comments); // Make sure to access the 'comments' key
     } catch (err) {
       console.error('Failed to fetch comments:', err.response?.data || err.message);
@@ -143,7 +143,7 @@ const Comment = ({ postId }) => {
     }
 
     try {
-      await axios.post('https://print-gurus.onrender.com/comment/', {
+      await axios.post('https://print-gurus-jmfg.onrender.com/comment/', {
         username: username,
         post_id: postId,
         comment: mainText
