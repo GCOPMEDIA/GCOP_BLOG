@@ -26,7 +26,7 @@ const Slide = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    axios.get("https://print-gurus.onrender.com/events/")
+    axios.get("https://print-gurus-jmfg.onrender.com/events/")
       .then((response) => {
         const fetchedItems = response.data.data;
         if (fetchedItems.length === 0) {
@@ -110,7 +110,7 @@ const BlogGrid = () => {
   const [snack, setSnack] = useState({ open: false, message: '' });
 
   useEffect(() => {
-    axios.get(' https://print-gurus.onrender.com/all-posts/')
+    axios.get(' https://print-gurus-jmfg.onrender.com/all-posts/')
       .then(response => {
         setPosts(response.data);
       })
@@ -120,14 +120,14 @@ const BlogGrid = () => {
   }, []);
 
   useEffect(() => {
-    axios.get('https://print-gurus.onrender.com/csrf/')
+    axios.get('https://print-gurus-jmfg.onrender.com/csrf/')
       .then(res => {
         axios.defaults.headers.post['X-CSRFToken'] = res.data.csrfToken;
       });
   }, []);
 
   const handleLike = (id) => {
-    axios.post(`https://print-gurus.onrender.com/like-post/${id}/`)
+    axios.post(`https://print-gurus-jmfg.onrender.com/like-post/${id}/`)
       .then(res => {
         setPosts(prevPosts => 
           prevPosts.map(post => 
