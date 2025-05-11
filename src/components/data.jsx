@@ -5,7 +5,7 @@ const BlogList = () => {
     const [posts, setPosts] = useState([]);
   
     useEffect(() => {
-      axios.get('https://print-gurus.onrender.com/all-posts/')
+      axios.get('https://print-gurus-jmfg.onrender.com/all-posts/')
         .then(response => {
             
           setPosts(response);
