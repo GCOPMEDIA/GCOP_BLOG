@@ -95,7 +95,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://print-gurus.onrender.com/api/signup', {
+      const response = await fetch('https://print-gurus-jmfg.onrender.com/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
