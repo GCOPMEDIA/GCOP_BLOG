@@ -42,7 +42,7 @@ const AboutUs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(" https://print-gurus.onrender.com/about/")
+    axios.get(" https://print-gurus-jmfg.onrender.com/about/")
       .then((response) => {
         setMockLeaders(response.data);
         setLoading(false);
